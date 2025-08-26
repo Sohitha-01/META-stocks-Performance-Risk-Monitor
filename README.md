@@ -76,7 +76,25 @@ pip install -r requirements.txt
 
 ## 📸 Sample Visualizations
 
-![Chart Example](Images/chart%20(1).png)
+This project includes multiple charts and visualizations to analyze META stock performance, risk, and technical indicators.  
+
+### META Stock Price & Indicators  
+[View META Stock Price](https://github.com/Sohitha-01/META-stocks-Performance-Risk-Monitor/blob/main/Images/chart%20(1).png)  
+[View MACD Indicator](https://github.com/Sohitha-01/META-stocks-Performance-Risk-Monitor/blob/main/Images/Chart%20(2).png)  
+
+### Trading Volume & Volatility  
+[View Trading Volume](https://github.com/Sohitha-01/META-stocks-Performance-Risk-Monitor/blob/main/Images/Chart%20(3).png)  
+[View RSI & Volatility](https://github.com/Sohitha-01/META-stocks-Performance-Risk-Monitor/blob/main/Images/Chart%20(4).png)  
+
+### Returns & Risk Metrics  
+[View Daily Returns Distribution](https://github.com/Sohitha-01/META-stocks-Performance-Risk-Monitor/blob/main/Images/Chart%20(5).png)  
+[View Drawdown & Risk](https://github.com/Sohitha-01/META-stocks-Performance-Risk-Monitor/blob/main/Images/Chart%20(6).png)  
+
+### Advanced Technical Analysis  
+[View Monthly Returns Heatmap](https://github.com/Sohitha-01/META-stocks-Performance-Risk-Monitor/blob/main/Images/Chart%20(7).png)  
+[View Bollinger Bands](https://github.com/Sohitha-01/META-stocks-Performance-Risk-Monitor/blob/main/Images/Chart%20(8%20).png)  
+[View Support & Resistance](https://github.com/Sohitha-01/META-stocks-Performance-Risk-Monitor/blob/main/Images/Chart(9).png)  
+[View Risk Summary](https://github.com/Sohitha-01/META-stocks-Performance-Risk-Monitor/blob/main/Images/Chart(10).png)  
 
 ---
 
