@@ -1,7 +1,6 @@
 # 📊 Meta Stocks Data Analysis
 
-A comprehensive project analyzing **Meta (Facebook)** stock performance using data analysis, visualization, and interactive dashboards.  
-This repository combines raw datasets, exploratory data analysis (EDA), cleaned datasets, dashboards, and visualization outputs.
+A comprehensive project analyzing **Meta stock performance Risk Monitor** using data analysis, visualization, and interactive dashboards.This repository combines raw datasets, exploratory data analysis (EDA), cleaned datasets, dashboards, and visualization outputs.
 
 ---
 
