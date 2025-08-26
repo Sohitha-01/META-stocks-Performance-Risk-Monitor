@@ -50,8 +50,8 @@ Meta Stocks Data/
 
 ### 1️. Clone the Repository
 ```bash
-git clone https://github.com/<your-username>/meta-stocks-data.git
-cd meta-stocks-data
+git clone https://github.com/<Sohitha-01>/META-stocks-Performance-Risk-Monitor.git
+cd META-stocks-Performance-Risk-Monitor
 ```
 
 ### 2️. Install Dependencies
