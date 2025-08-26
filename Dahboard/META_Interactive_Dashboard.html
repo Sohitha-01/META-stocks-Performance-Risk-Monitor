@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>META Stock Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .metric-value {
+            font-size: 2.2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .positive { color: #28a745; }
+        .negative { color: #dc3545; }
+        .neutral { color: #17a2b8; }
+        
+        .charts-container {
+            padding: 30px;
+        }
+        
+        .chart-section {
+            margin-bottom: 40px;
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .chart-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+        
+        .chart-container {
+            height: 400px;
+            width: 100%;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>📈 META Stock Analysis Dashboard</h1>
+            <p>Interactive analysis of Meta Platforms Inc. stock performance</p>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value positive">$358.42</div>
+                <div class="metric-label">Current Price</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value positive">+2.34%</div>
+                <div class="metric-label">Daily Change</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value neutral">$967.3B</div>
+                <div class="metric-label">Market Cap</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value neutral">16.2M</div>
+                <div class="metric-label">Avg Volume</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value neutral">$384.30</div>
+                <div class="metric-label">52W High</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value neutral">$274.38</div>
+                <div class="metric-label">52W Low</div>
+            </div>
+        </div>
+        
+        <div class="charts-container">
+            <div class="chart-section">
+                <h2 class="chart-title">📊 Stock Price Movement</h2>
+                <div id="priceChart" class="chart-container"></div>
+            </div>
+            
+            <div class="grid-2">
+                <div class="chart-section">
+                    <h2 class="chart-title">📈 Daily Returns</h2>
+                    <div id="returnsChart" class="chart-container"></div>
+                </div>
+                
+                <div class="chart-section">
+                    <h2 class="chart-title">📊 Volume Analysis</h2>
+                    <div id="volumeChart" class="chart-container"></div>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div class="chart-section">
+                    <h2 class="chart-title">⚡ Volatility Trends</h2>
+                    <div id="volatilityChart" class="chart-container"></div>
+                </div>
+                
+                <div class="chart-section">
+                    <h2 class="chart-title">🎯 Moving Averages</h2>
+                    <div id="maChart" class="chart-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample META stock data
+        const dates = [];
+        const prices = [];
+        const volumes = [];
+        const returns = [];
+        
+        // Generate sample data for the last year
+        const startDate = new Date('2023-01-01');
+        const endDate = new Date('2024-01-01');
+        let currentPrice = 200;
+        
+        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+            if (d.getDay() !== 0 && d.getDay() !== 6) { // Skip weekends
+                dates.push(d.toISOString().split('T')[0]);
+                
+                // Simulate price movement
+                const change = (Math.random() - 0.5) * 10;
+                currentPrice += change;
+                prices.push(Math.max(currentPrice, 50)); // Minimum price of $50
+                
+                // Simulate volume
+                volumes.push(Math.floor(Math.random() * 20000000) + 5000000);
+                
+                // Calculate return
+                if (prices.length > 1) {
+                    const dailyReturn = ((prices[prices.length - 1] - prices[prices.length - 2]) / prices[prices.length - 2]) * 100;
+                    returns.push(dailyReturn);
+                } else {
+                    returns.push(0);
+                }
+            }
+        }
+        
+        // Create charts when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            createPriceChart();
+            createReturnsChart();
+            createVolumeChart();
+            createVolatilityChart();
+            createMAChart();
+        });
+        
+        function createPriceChart() {
+            const trace = {
+                x: dates,
+                y: prices,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'META Close Price',
+                line: {
+                    color: '#1f77b4',
+                    width: 2
+                }
+            };
+            
+            const layout = {
+                title: '',
+                xaxis: {
+                    title: 'Date',
+                    showgrid: true,
+                    gridcolor: '#e9ecef'
+                },
+                yaxis: {
+                    title: 'Price ($)',
+                    showgrid: true,
+                    gridcolor: '#e9ecef'
+                },
+                margin: {l: 60, r: 30, t: 20, b: 60},
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                hovermode: 'x unified'
+            };
+            
+            Plotly.newPlot('priceChart', [trace], layout, {responsive: true});
+        }
+        
+        function createReturnsChart() {
+            const trace = {
+                x: returns,
+                type: 'histogram',
+                nbinsx: 30,
+                name: 'Daily Returns',
+                marker: {
+                    color: '#2ca02c',
+                    opacity: 0.7
+                }
+            };
+            
+            const layout = {
+                title: '',
+                xaxis: {
+                    title: 'Daily Return (%)',
+                    showgrid: true,
+                    gridcolor: '#e9ecef'
+                },
+                yaxis: {
+                    title: 'Frequency',
+                    showgrid: true,
+                    gridcolor: '#e9ecef'
+                },
+                margin: {l: 60, r: 30, t: 20, b: 60},
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white'
+            };
+            
+            Plotly.newPlot('returnsChart', [trace], layout, {responsive: true});
+        }
+        
+        function createVolumeChart() {
+            const trace = {
+                x: dates,
+                y: volumes,
+                type: 'bar',
+                name: 'Volume',
+                marker: {
+                    color: '#ff7f0e',
+                    opacity: 0.7
+                }
+            };
+            
+            const layout = {
+                title: '',
+                xaxis: {
+                    title: 'Date',
+                    showgrid: true,
+                    gridcolor: '#e9ecef'
+                },
+                yaxis: {
+                    title: 'Volume',
+                    showgrid: true,
+                    gridcolor: '#e9ecef'
+                },
+                margin: {l: 60, r: 30, t: 20, b: 60},
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white'
+            };
+            
+            Plotly.newPlot('volumeChart', [trace], layout, {responsive: true});
+        }
+        
+        function createVolatilityChart() {
+            // Calculate 30-day rolling volatility
+            const volatility = [];
+            const volDates = [];
+            
+            for (let i = 29; i < returns.length; i++) {
+                const window = returns.slice(i - 29, i + 1);
+                const mean = window.reduce((a, b) => a + b) / window.length;
+                const variance = window.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / window.length;
+                const vol = Math.sqrt(variance) * Math.sqrt(252); // Annualized volatility
+                
+                volatility.push(vol);
+                volDates.push(dates[i]);
+            }
+            
+            const trace = {
+                x: volDates,
+                y: volatility,
+                type: 'scatter',
+                mode: 'lines',
+                name: '30-Day Volatility',
+                line: {
+                    color: '#d62728',
+                    width: 2
+                }
+            };
+            
+            const layout = {
+                title: '',
+                xaxis: {
+                    title: 'Date',
+                    showgrid: true,
+                    gridcolor: '#e9ecef'
+                },
+                yaxis: {
+                    title: 'Volatility (%)',
+                    showgrid: true,
+                    gridcolor: '#e9ecef'
+                },
+                margin: {l: 60, r: 30, t: 20, b: 60},
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white'
+            };
+            
+            Plotly.newPlot('volatilityChart', [trace], layout, {responsive: true});
+        }
+        
+        function createMAChart() {
+            // Calculate moving averages
+            const ma20 = [];
+            const ma50 = [];
+            
+            for (let i = 0; i < prices.length; i++) {
+                if (i >= 19) {
+                    const sum20 = prices.slice(i - 19, i + 1).reduce((a, b) => a + b, 0);
+                    ma20.push(sum20 / 20);
+                } else {
+                    ma20.push(null);
+                }
+                if (i >= 49) {
+                    const sum50 = prices.slice(i - 49, i + 1).reduce((a, b) => a + b, 0);
+                    ma50.push(sum50 / 50);
+                } else {
+                    ma50.push(null);
+                }
+            }
+            
+            const trace1 = {
+                x: dates,
+                y: ma20,
+                type: 'scatter',
+                mode: 'lines',
+                name: '20-Day MA',
+                line: {
+                    color: '#ff7f0e',
+                    width: 2
+                }
+            };
+            const trace2 = {
+                x: dates,
+                y: ma50,
+                type: 'scatter',
+                mode: 'lines',
+                name: '50-Day MA',
+                line: {
+                    color: '#1f77b4',
+                    width: 2
+                }
+            };
+            
+            const layout = {
+                title: '',
+                xaxis: {
+                    title: 'Date',
+                    showgrid: true,
+                    gridcolor: '#e9ecef'
+                },
+                yaxis: {
+                    title: 'Price ($)',
+                    showgrid: true,
+                    gridcolor: '#e9ecef'
+                },
+                margin: {l: 60, r: 30, t: 20, b: 60},
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white'
+            };
+            
+            Plotly.newPlot('maChart', [trace1, trace2], layout, {responsive: true});
+        }
+    </script>
+</body>
+</html>
